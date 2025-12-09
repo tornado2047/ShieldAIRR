@@ -28,11 +28,11 @@ Imports:
     ragg,
     purrr,
     stringr,
-    sumrep,
     stats,
     DESeq2,
     ggrepel,
     rlang
 Suggests:
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    sumrep
 Config/testthat/edition: 3

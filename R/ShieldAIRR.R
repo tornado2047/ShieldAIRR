@@ -1,23 +1,32 @@
+#' ShieldAIRR: TCR/BCR AIRR Repertoire Analysis Toolkit
+#'
+#' ShieldAIRR 提供了一系列面向 AIRR 格式 AIRR 数据的高层封装函数：
+#'
+#' \itemize{
+#'   \item 单样本整体概览：\code{\link{summarizeRepertoirePlot}}
+#'   \item CDR3 理化性质景观：\code{\link{shield_cdr3_landscape}}
+#'   \item 时间序列克隆轨迹聚类：\code{\link{make_long}},
+#'         \code{\link{summarise_clonotypes}},
+#'         \code{\link{cluster_clonotypes}},
+#'         \code{\link{plot_cluster_traj}}
+#'   \item V/J 基因差异使用分析：\code{\link{shield_vj_summarise}},
+#'         \code{\link{shield_vj_deseq}}
+#' }
+#'
+#' @keywords internal
+"_PACKAGE"
 
 
-getwd()
 
 
-usethis::use_git()      # 初始化 git
-usethis::use_github()   # 直接在 GitHub 建仓并 push
 
 
-usethis::use_mit_license("XF Zhang")
-usethis::use_r("theme_shield.R")
-usethis::use_r("repertoire_summary")
-usethis::use_r("cdr3_physchem")
-usethis::use_r("time_series")
-usethis::use_r("bulk_vj_deseq")
 
 
-## 未执行
-devtools::document()
-devtools::check()
-devtools::install()
+
+
+
+
+
 
 
