@@ -2,17 +2,17 @@
 % Please edit documentation in R/time_series.R
 \name{plot_cluster_traj}
 \alias{plot_cluster_traj}
-\title{Plot clonotype abundance trajectories by clusters}
+\title{Time-series: plot cluster trajectories}
 \usage{
 plot_cluster_traj(long, clono_clustered, k)
 }
 \arguments{
-\item{long}{make_long() 的输出。}
+\item{long}{make_long() 的输出}
 
-\item{clono_clustered}{cluster_clonotypes() 的输出。}
+\item{clono_clustered}{cluster_clonotypes() 的输出}
 
-\item{k}{聚类数，仅用于标题。}
+\item{k}{聚类簇数}
 }
 \description{
-Plot clonotype abundance trajectories by clusters
+Time-series: plot cluster trajectories
 }

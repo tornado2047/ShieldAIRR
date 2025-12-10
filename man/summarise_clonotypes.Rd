@@ -2,16 +2,16 @@
 % Please edit documentation in R/time_series.R
 \name{summarise_clonotypes}
 \alias{summarise_clonotypes}
-\title{Summarise clonotype time-series features}
+\title{Time-series: summarise clonotype features}
 \usage{
 summarise_clonotypes(long)
 }
 \arguments{
-\item{long}{由 make_long() 生成的数据框。}
+\item{long}{make_long() 的输出}
 }
 \value{
-data.frame，每个 clonotype 一行，含 slope / persistence 等特征。
+data.frame，每个 clonotype 对应一行
 }
 \description{
-Summarise clonotype time-series features
+Time-series: summarise clonotype features
 }

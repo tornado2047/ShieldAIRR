@@ -2,7 +2,7 @@
 % Please edit documentation in R/time_series.R
 \name{make_long}
 \alias{make_long}
-\title{Build long-form clonotype × time table}
+\title{Time-series: make long-format clonotype table}
 \usage{
 make_long(
   dfs,
@@ -12,18 +12,17 @@ make_long(
 )
 }
 \arguments{
-\item{dfs}{命名的 data.frame 列表，每个元素为一个时间点的 AIRR 表格。
-列表名会被当作 time 变量（数值）使用。}
+\item{dfs}{命名列表，每个元素是一个 data.frame（一个时间点的 AIRR 数据）}
 
-\item{clonotype_col}{克隆定义列，默认 "junction_aa"。}
+\item{clonotype_col}{定义克隆的列名，默认 "junction_aa"}
 
-\item{abundance_col}{丰度列，默认 "duplicate_count"。}
+\item{abundance_col}{丰度列名，默认 "duplicate_count"}
 
-\item{min_count}{过滤掉丰度小于该值的条目。}
+\item{min_count}{保留的最小丰度阈值}
 }
 \value{
-data.frame，含列 junction_aa, duplicate_count, time, l_abundance。
+data.frame，包含 junction_aa, duplicate_count, time, l_abundance
 }
 \description{
-Build long-form clonotype × time table
+Time-series: make long-format clonotype table
 }

@@ -2,18 +2,22 @@
 % Please edit documentation in R/time_series.R
 \name{cluster_clonotypes}
 \alias{cluster_clonotypes}
-\title{k-means clustering on clonotype features}
+\title{Time-series: cluster clonotypes by trajectory features}
 \usage{
-cluster_clonotypes(clono_features, k = 6)
+cluster_clonotypes(clono_features, k = 6, min_time = 2, min_tot = 0)
 }
 \arguments{
-\item{clono_features}{summarise_clonotypes() 的输出。}
+\item{clono_features}{summarise_clonotypes() 的输出}
 
-\item{k}{聚类数。}
+\item{k}{聚类簇数}
+
+\item{min_time}{出现的最少时间点}
+
+\item{min_tot}{最小累计丰度}
 }
 \value{
-增加 cluster 列的 data.frame。
+data.frame，增加一列 cluster
 }
 \description{
-k-means clustering on clonotype features
+Time-series: cluster clonotypes by trajectory features
 }
