@@ -1,29 +1,4 @@
 
-## ----time-series-example, eval=FALSE-----------------------------------
-library(ShieldAIRR)
-library(dplyr)
-# 假设前面已经构造好了 RA_Patient 列表
-list1 <- RA_Patient
-set.seed(2025)
-dfs <- list1[sample(seq_along(list1), 10)]
-names(dfs) <- 0:9
-long <- make_long(dfs,
-  clonotype_col = "junction_aa",
-  abundance_col = "duplicate_count",
-  min_count     = 1
-)
-feat <- summarise_clonotypes(long)
-k   <- 6
-clu <- cluster_clonotypes(
-  clono_features = feat,
-  k              = k,
-  min_time       = 3,
-  min_tot        = 100
-)
-p_traj <- plot_cluster_traj(long, clu, k = k)
-p_traj
-张雪飞
-  下午 3:25
 # ShieldAIRR
 ShieldAIRR 是一个用于 **TCR/BCR AIRR-seq 数据分析** 的 R 包。
 它提供从 **V/J 基因使用、组间差异、单样本概览、时间序列追踪** 的完整分析工作流。
