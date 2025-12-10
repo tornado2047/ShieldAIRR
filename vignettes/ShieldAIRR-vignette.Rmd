@@ -1,0 +1,238 @@
+---
+title: "ShieldAIRR: A Toolkit for TCR/BCR AIRR-seq Repertoire Analysis"
+author: "ShieldAIRR Development Team"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{ShieldAIRR Analysis Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+# Introduction
+
+**ShieldAIRR** is an R package for TCR/BCR AIRR-seq repertoire analysis.  
+It provides:
+
+- Single-sample repertoire summary visualization  
+- V/J gene usage summarization  
+- Differential V/J usage analysis using DESeq2  
+- Longitudinal clonotype trajectory analysis  
+- Physicochemical CDR3 landscape visualization  
+- A unified ggplot theme (`theme_shield()`)
+
+This vignette demonstrates a full workflow using ShieldAIRR.
+
+To begin:
+
+```r
+library(ShieldAIRR)
+```
+
+# Installation
+
+Install the package from GitHub:
+
+```r
+install.packages("remotes")
+remotes::install_github("tornado2047/ShieldAIRR")
+```
+
+Optional: install all dependencies including sumrep and CollessLike:
+
+```r
+shield_install_deps(
+  sumrep_path      = "/path/to/sumrep",
+  colless_tar_path = "/path/to/CollessLike_2.0.tar.gz"
+)
+```
+
+# Input Format
+
+ShieldAIRR expects AIRR-style data frames containing at least:
+
+| column          | meaning                      |
+|-----------------|------------------------------|
+| junction_aa     | CDR3 amino acid sequence     |
+| duplicate_count | clonotype abundance          |
+| v_call          | V gene annotation            |
+| j_call          | J gene annotation            |
+
+Multiple samples should be arranged in lists:
+
+```r
+RA_Control <- list(sampleA_df, sampleB_df, ...)
+RA_Patient <- list(sampleC_df, sampleD_df, ...)
+```
+
+We assume the user has loaded example objects such as:
+
+```r
+df_demo
+RA_Control
+RA_Patient
+```
+
+# 1. Single-sample Repertoire Summary
+
+Use `summarizeRepertoirePlot()` to generate a comprehensive visualization:
+
+```r
+summarizeRepertoirePlot(
+  df_demo,
+  sample_name = "Demo sample",
+  output_pdf  = FALSE
+)
+```
+
+This produces:
+
+- CDR3 length distribution
+- V-gene usage
+- J-gene usage
+- V/J pairing heatmap
+- Rank–abundance clonal expansion plot
+
+All visualizations use `theme_shield()` for consistency.
+
+# 2. V/J Gene Usage Summarization
+
+Extract V gene usage distribution:
+
+```r
+getVGeneDistributions(df_demo)
+```
+
+Extract J gene usage:
+
+```r
+getJGeneDistributions(df_demo)
+```
+
+Plotting utility:
+
+```r
+plotGeneUsage(df_demo, gene = "V", top_n = 25)
+plotGeneUsage(df_demo, gene = "J", top_n = 30)
+```
+
+# 3. Differential Gene Usage: Control vs Patient
+
+To compare two groups of samples:
+
+```r
+res_v <- shield_vj_deseq_lists(
+  list_control = RA_Control,
+  list_case    = RA_Patient,
+  gene         = "v_call",
+  method       = "mean"
+)
+
+res_j <- shield_vj_deseq_lists(
+  list_control = RA_Control,
+  list_case    = RA_Patient,
+  gene         = "j_call",
+  method       = "mean"
+)
+```
+
+Volcano plots:
+
+```r
+res_v$volcano_plot
+res_j$volcano_plot
+```
+
+Cohen’s d:
+
+```r
+res_v$cohend_plot
+res_j$cohend_plot
+```
+
+Differential expression table:
+
+```r
+head(res_v$res)
+```
+
+# 4. Longitudinal Clonotype Trajectory Analysis
+
+We simulate a 10-time-point dataset by sampling 10 patient samples:
+
+```r
+set.seed(2025)
+dfs <- RA_Patient[sample(seq_along(RA_Patient), 10)]
+names(dfs) <- 0:9
+```
+
+## Step 1: Convert to long format
+
+```r
+long <- make_long(dfs)
+```
+
+## Step 2: Extract clonotype features
+
+```r
+feat <- summarise_clonotypes(long)
+```
+
+## Step 3: Cluster trajectory patterns
+
+```r
+clu <- cluster_clonotypes(
+  clono_features = feat,
+  k        = 6,
+  min_time = 3,
+  min_tot  = 100
+)
+```
+
+## Step 4: Plot the trajectory landscape
+
+```r
+plot_cluster_traj(long, clu, k = 6)
+```
+
+# 5. Physicochemical CDR3 Landscape (optional)
+
+```r
+shield_cdr3_landscape(df_demo)
+```
+
+This visualization summarizes amino acid physicochemical properties across CDR3 sequences.
+
+# 6. Full Workflow Example
+
+```r
+# 1. Summary visualization
+summarizeRepertoirePlot(df_demo, "Demo")
+
+# 2. Differential analysis
+res <- shield_vj_deseq_lists(RA_Control, RA_Patient, gene="v_call")
+res$volcano_plot
+
+# 3. Time-series trajectory analysis
+dfs <- RA_Patient[1:10]
+names(dfs) <- 0:9
+long <- make_long(dfs)
+feat <- summarise_clonotypes(long)
+clu  <- cluster_clonotypes(feat, k = 6)
+plot_cluster_traj(long, clu, k = 6)
+```
+
+# Session Info
+
+```r
+sessionInfo()
+```
+
+# Citation
+
+If you use ShieldAIRR in published work, please cite:
+
+ShieldAIRR Development Team (2025). ShieldAIRR: A Comprehensive Toolkit for AIRR-seq Repertoire Analysis. GitHub Repository: https://github.com/tornado2047/ShieldAIRR

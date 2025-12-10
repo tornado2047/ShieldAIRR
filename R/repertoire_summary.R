@@ -3,6 +3,11 @@
 #' 本文件包含针对单个 TCR/BCR AIRR 样本的统计量计算与可视化函数，
 #' 包括 CDR3 长度分布、V/J 使用、V–J 配对、克隆丰度曲线以及综合概览图。
 #'
+#' 此文档块用于描述整个文件的功能，不对应单个函数。
+#'
+#' @name repertoire_summary
+#' @keywords internal
+#'
 #' @import data.table
 #' @import ggplot2
 #' @importFrom magrittr "%>%"
@@ -10,7 +15,6 @@
 #' @importFrom patchwork plot_annotation
 #' @importFrom tibble column_to_rownames
 #' @importFrom scales comma comma_format
-#' @keywords internal
 NULL
 
 # 内部小工具：NULL 合并（不导出）

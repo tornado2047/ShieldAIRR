@@ -34,5 +34,8 @@ Imports:
     rlang
 Suggests:
     testthat (>= 3.0.0),
-    sumrep
+    sumrep,
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
+VignetteBuilder: knitr
