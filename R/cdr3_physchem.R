@@ -56,7 +56,18 @@ shield_cdr3_landscape <- function(df,
     )
   }
   
-  # -------- 3. 逐条计算理化性质 --------
+  # -------- 3. 标准化数据的安全清理 --------
+  safe_standardize <- function(mat) {
+    # 将 NA、NaN、Inf 替换为 0
+    mat[is.na(mat) | is.nan(mat)] <- 0
+    mat[is.infinite(mat)] <- 0
+    
+    # 在标准化前检查并移除全相同的列
+    mat <- mat[, apply(mat, 2, function(x) length(unique(x)) > 1)]  # 去除全相同的列
+    return(mat)
+  }
+  
+  # -------- 4. 逐条计算理化性质 --------
   phys <- data.frame(
     Sequence      = seqs,
     Length        = nchar(seqs),
@@ -95,7 +106,7 @@ shield_cdr3_landscape <- function(df,
   )
   phys$logDup <- log10(phys$Duplicate + 1)
 
-  # -------- 4. Atchley 因子分布 --------
+  # -------- 5. Atchley 因子分布 --------
   AF <- sumrep::getAtchleyFactorDistributions(df)
   AF_df <- dplyr::bind_rows(
     lapply(seq_along(AF), function(i) {
@@ -136,7 +147,7 @@ shield_cdr3_landscape <- function(df,
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
     )
   
-  # -------- 5. Kidera 因子 + PCA --------
+  # -------- 6. Kidera 因子 + PCA --------
   KF <- sumrep::getKideraFactorDistributions(df)
   KF_mat <- do.call(cbind, KF)
   pca_kf <- stats::prcomp(KF_mat, scale. = TRUE)
@@ -165,7 +176,7 @@ shield_cdr3_landscape <- function(df,
     ) +
     theme_shield(base_size = 14)
   
-  # -------- 6. Aliphatic index vs 克隆扩增 --------
+  # -------- 7. Aliphatic index vs 克隆扩增 --------
   p_ai <- ggplot2::ggplot(phys, ggplot2::aes(x = Aliphatic, y = Duplicate)) +
     ggplot2::geom_point(
       ggplot2::aes(color = logDup, size = Duplicate),
@@ -187,7 +198,7 @@ shield_cdr3_landscape <- function(df,
     ) +
     theme_shield(base_size = 14)
   
-  # -------- 7. 关键理化性质的密度分布 --------
+  # -------- 8. 关键理化性质的密度分布 --------
   phys_long <- phys |>
     dplyr::select(
       Length, GRAVY, Charge_pH7, pI,
@@ -212,7 +223,7 @@ shield_cdr3_landscape <- function(df,
     ) +
     ggplot2::theme_bw(base_size = 11)
   
-  # -------- 8. Top 50 clone 理化性质热图（独立图） --------
+  # -------- 9. Top 50 clone 理化性质热图（独立图） --------
   if (nrow(phys) >= 1) {
     top_n <- min(50L, nrow(phys))
     top50 <- phys |>
@@ -226,7 +237,7 @@ shield_cdr3_landscape <- function(df,
       scale(center = TRUE, scale = TRUE) |>
       as.matrix()
     
-    # 先清理 NA、NaN 和 Inf
+    # 使用 safe_standardize 函数
     mat <- safe_standardize(mat)
     
     rownames(mat) <- paste0(
@@ -248,7 +259,7 @@ shield_cdr3_landscape <- function(df,
     )
   }
 
-  # -------- 9. 拼成主图并可选保存 --------
+  # -------- 10. 拼成主图并可选保存 --------
   main_title <- "Comprehensive Physicochemical Landscape of TCR/BCR CDR3 Repertoire"
   subtitle   <- paste(
     sample_name,
@@ -286,4 +297,5 @@ shield_cdr3_landscape <- function(df,
   
   invisible(final_plot)
 }
+
 
