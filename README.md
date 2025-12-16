@@ -1,42 +1,4 @@
 
-## ----time-series-example, eval=FALSE-----------------------------------
-library(ShieldAIRR)
-library(dplyr)
-# 假设前面已经构造好了 RA_Patient 列表
-list1 <- RA_Patient
-set.seed(2025)
-dfs <- list1[sample(seq_along(list1), 10)]
-names(dfs) <- 0:9
-long <- make_long(dfs,
-  clonotype_col = "junction_aa",
-  abundance_col = "duplicate_count",
-  min_count     = 1
-)
-feat <- summarise_clonotypes(long)
-k   <- 6
-clu <- cluster_clonotypes(
-  clono_features = feat,
-  k              = k,
-  min_time       = 3,
-  min_tot        = 100
-)
-p_traj <- plot_cluster_traj(long, clu, k = k)
-p_traj
-张雪飞
-  下午 3:25
-# ShieldAIRR
-ShieldAIRR 是一个用于 **TCR/BCR AIRR-seq 数据分析** 的 R 包。
-它提供从 **V/J 基因使用、组间差异、单样本概览、时间序列追踪** 的完整分析工作流。
----
-## :扳手: 安装
-### 1. 从 GitHub 安装包
-```r
-# 如有需要先安装 remotes：
-# install.packages("remotes")
-remotes::install_github("tornado2047/ShieldAIRR")
-library(ShieldAIRR)
-张雪飞
-  下午 3:31
 # ShieldAIRR
 ShieldAIRR 是一个用于 TCR/BCR AIRR-seq 数据分析的 R 包，提供从单样本分析、组间差异分析，到时间序列克隆轨迹建模的全流程工具。
 本包的设计理念是模块化、可扩展、与 sumrep、Immcantation 等生态兼容，方便进行高质量可视化与统计分析。
@@ -47,6 +9,7 @@ ShieldAIRR 是一个用于 TCR/BCR AIRR-seq 数据分析的 R 包，提供从单
 install.packages("remotes")
 remotes::install_github("tornado2047/ShieldAIRR")
 library(ShieldAIRR)
+
 2. 推荐：一键安装全部依赖（包括 sumrep 和 CollessLike 的本地安装）
 shield_install_deps(
     sumrep_path      = "/path/to/sumrep",
@@ -57,6 +20,7 @@ shield_install_deps(
 - Bioconductor 依赖
 - 本地 sumrep
 - 本地 CollessLike
+- ShieldAIRR will automatically install and load sumrep on first use.
 ====================================================================
 输入数据格式 Input Format
 ====================================================================

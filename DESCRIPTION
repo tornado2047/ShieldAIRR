@@ -34,7 +34,9 @@ Imports:
     rlang
 Suggests:
     testthat (>= 3.0.0),
-    sumrep,
+    devtools,
+    BiocManager,
+    git2r,
     knitr,
     rmarkdown
 Config/testthat/edition: 3

@@ -15,6 +15,7 @@
 shield_cdr3_landscape <- function(df,
                                   sample_name   = "Sample",
                                   output_prefix = "CDR3_Physicochemical_Landscape") {
+  shield_setup_sumrep()
   # -------- 0. 检查 sumrep 是否可用 --------
   if (!requireNamespace("sumrep", quietly = TRUE)) {
     stop(
@@ -88,6 +89,7 @@ shield_cdr3_landscape <- function(df,
     stringsAsFactors = FALSE
   )
   phys$logDup <- log10(phys$Duplicate + 1)
+
   # -------- 4. Atchley 因子分布 --------
   AF <- sumrep::getAtchleyFactorDistributions(df)
   AF_df <- dplyr::bind_rows(
