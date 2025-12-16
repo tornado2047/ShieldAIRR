@@ -1,167 +1,176 @@
-<<<<<<< HEAD
+# ShieldAIRR
 
-=======
-# ShieldAIRR
-ShieldAIRR 是一个用于 **TCR/BCR AIRR-seq 数据分析** 的 R 包。
-它提供从 **V/J 基因使用、组间差异、单样本概览、时间序列追踪** 的完整分析工作流。
+**ShieldAIRR** 是一个面向 **TCR / BCR AIRR-seq 数据** 的 R 语言分析框架，  
+用于系统性刻画 **免疫组库组成、基因使用差异以及克隆随时间的动态行为**。
+
+该包强调 **统计可解释性、模块化设计与生态兼容性**，  
+可与 **Immcantation / sumrep** 无缝衔接，  
+适用于基础免疫学研究、纵向队列分析及临床免疫监测场景。
+
 ---
-## :扳手: 安装
-### 1. 从 GitHub 安装包
+
+## ✨ Key Features
+
+- 🧬 **单样本免疫组库概览**
+  - CDR3 长度分布
+  - V / J 基因使用
+  - V–J 配对矩阵
+  - Rank–abundance 克隆结构
+
+- 📊 **组间差异分析**
+  - 基于 DESeq2 的 V/J 基因差异检验
+  - 同时报告效应量（Cohen's *d*）
+  - 内置火山图与统计可视化
+
+- ⏱ **时间序列克隆轨迹建模**
+  - 克隆纵向特征提取
+  - 克隆轨迹聚类
+  - 动态扩增 / 收缩模式可视化
+
+- 🔗 **生态兼容**
+  - 原生支持 AIRR / Immcantation 数据结构
+  - 与 `sumrep`、`alakazam`、`shazam` 生态兼容
+
+---
+
+## 📦 Installation
+
+### 1. 从 GitHub 安装 ShieldAIRR
+
 ```r
-# 如有需要先安装 remotes：
-# install.packages("remotes")
-remotes::install_github("tornado2047/ShieldAIRR")
-library(ShieldAIRR)
-张雪飞
-  下午 3:31
->>>>>>> c98770848b2a660e22fe3d5dc61d3493372b093a
-# ShieldAIRR
-ShieldAIRR 是一个用于 TCR/BCR AIRR-seq 数据分析的 R 包，提供从单样本分析、组间差异分析，到时间序列克隆轨迹建模的全流程工具。
-本包的设计理念是模块化、可扩展、与 sumrep、Immcantation 等生态兼容，方便进行高质量可视化与统计分析。
-====================================================================
-安装 Installation
-====================================================================
-1. 从 GitHub 安装 ShieldAIRR：
 install.packages("remotes")
 remotes::install_github("tornado2047/ShieldAIRR")
 library(ShieldAIRR)
 
-2. 推荐：一键安装全部依赖（包括 sumrep 和 CollessLike 的本地安装）
+2.（推荐）一键安装全部依赖
+ShieldAIRR 依赖部分 非 CRAN 包（如 sumrep、CollessLike）。
+推荐使用内置函数完成统一部署：
 shield_install_deps(
     sumrep_path      = "/path/to/sumrep",
     colless_tar_path = "/path/to/CollessLike_2.0.tar.gz"
 )
-该函数会自动安装：
-- CRAN 依赖
-- Bioconductor 依赖
-- 本地 sumrep
-- 本地 CollessLike
-- ShieldAIRR will automatically install and load sumrep on first use.
-====================================================================
-输入数据格式 Input Format
-====================================================================
-ShieldAIRR 支持所有 AIRR 风格数据框（data.frame），至少需包含以下列：
-junction_aa        CDR3 氨基酸序列
-duplicate_count     克隆丰度
-v_call              V 基因注释
-j_call              J 基因注释
-多个样本应组织成如下结构：
+该函数将自动安装并配置：
+CRAN 依赖
+Bioconductor 依赖
+本地 sumrep
+本地 CollessLike
+sumrep 将在首次调用相关功能时自动加载。
+
+:inbox_tray: Input Data Format
+ShieldAIRR 接受 AIRR 标准风格 的 data.frame，
+至少包含以下字段：
+ColumnDescriptionjunction_aaCDR3 氨基酸序列duplicate_count克隆丰度v_callV 基因注释j_callJ 基因注释
+多样本数据组织方式
 RA_Control <- list(sampleA_df, sampleB_df, ...)
 RA_Patient <- list(sampleC_df, sampleD_df, ...)
-====================================================================
-示例 1：单样本 Repertoire 综合分析图
-====================================================================
-df_demo <- RA_Patient[[1]]
+
+:test_tube: Example 1：单样本免疫组库综合概览
+df <- RA_Patient[[1]]
+
 summarizeRepertoirePlot(
-    df_demo,
-    sample_name = "Demo sample",
+    df,
+    sample_name = "Patient_1",
     output_pdf  = FALSE
 )
-输出包含：
-- CDR3 长度分布
-- V / J 基因使用
-- V-J 配对矩阵
-- Rank-Abundance 克隆丰度曲线
-- 统一主题 theme_shield()
-====================================================================
-示例 2：对照组 vs 实验组 的 V/J 基因差异分析
-====================================================================
+该函数生成一个标准化的免疫组库摘要图，适合：
+单样本 QC
+Supplementary figure
+不同实验批次快速对比
+
+:chart_with_upwards_trend: Example 2：V / J 基因组间差异分析
 res_v <- shield_vj_deseq_lists(
     list_control = RA_Control,
     list_case    = RA_Patient,
-    gene         = "v_call",
-    method       = "mean"
+    gene         = "v_call"
 )
+
 res_j <- shield_vj_deseq_lists(
     list_control = RA_Control,
     list_case    = RA_Patient,
-    gene         = "j_call",
-    method       = "mean"
+    gene         = "j_call"
 )
-查看火山图和 Cohen's d 图：
+可视化输出
 res_v$volcano_plot
-res_j$volcano_plot
 res_v$cohend_plot
-res_j$cohend_plot
-查看差异结果：
+差异结果表
 head(res_v$res)
-====================================================================
-示例 3：时间序列克隆轨迹建模（10 个时间点模拟）
-====================================================================
-# 从 RA_Patient 随机选择 10 个样本模拟 10 个时间点
+
+⏱ Example 3：时间序列克隆轨迹分析
+# 构造 10 个时间点示例
 set.seed(2025)
 dfs <- RA_Patient[sample(seq_along(RA_Patient), 10)]
 names(dfs) <- 0:9
-# Step 1: 转换为 long-format 数据
+
+# 转换为 long format
 long <- make_long(dfs)
-# Step 2: 提取克隆的时间特征
+
+# 提取克隆时间特征
 feat <- summarise_clonotypes(long)
-# Step 3: 聚类轨迹（例如 k = 6）
+
+# 轨迹聚类
 clu <- cluster_clonotypes(
     clono_features = feat,
     k        = 6,
     min_time = 3,
     min_tot  = 100
 )
-# Step 4: 绘制轨迹聚类图
+
+# 可视化克隆轨迹
 plot_cluster_traj(long, clu, k = 6)
-====================================================================
-典型完整工作流（推荐使用）
-====================================================================
-# 1. 单样本总结：
-summarizeRepertoirePlot(RA_Patient[[1]], "Patient_1")
-# 2. 差异分析：
-res_v <- shield_vj_deseq_lists(RA_Control, RA_Patient, gene="v_call")
-res_j <- shield_vj_deseq_lists(RA_Control, RA_Patient, gene="j_call")
-# 3. 时间序列分析：
-dfs  <- RA_Patient[sample(seq_along(RA_Patient), 10)]
-names(dfs) <- 0:9
-long <- make_long(dfs)
+该模块适用于：
+疫苗接种纵向追踪
+治疗前后免疫反应评估
+克隆扩增动力学建模
+
+:repeat: Recommended Workflow
+# 单样本 QC
+summarizeRepertoirePlot(RA_Patient[[1]])
+
+# 差异分析
+res_v <- shield_vj_deseq_lists(RA_Control, RA_Patient, gene = "v_call")
+
+# 时间序列分析
+long <- make_long(RA_Patient[1:10])
 feat <- summarise_clonotypes(long)
 clu  <- cluster_clonotypes(feat, k = 6)
-plot_cluster_traj(long, clu, k = 6)
-====================================================================
-函数索引 Function Index
-====================================================================
-CDR3 理化性质：
-  shield_cdr3_landscape()
-单样本分析：
-  summarizeRepertoirePlot()
-  getSummaryStats()
-V/J 基因使用分析：
-  getVGeneDistributions()
-  getJGeneDistributions()
-差异分析（DESeq2）：
-  shield_vj_summarise_lists()
-  shield_vj_deseq_lists()
-时间序列分析：
-  make_long()
-  summarise_clonotypes()
-  cluster_clonotypes()
-  plot_cluster_traj()
-可视化主题：
-  theme_shield()
-依赖安装：
-  shield_install_deps()
-====================================================================
-贡献指南 Contributing
-====================================================================
-欢迎提交：
-- Bug report
-- Feature request
-- Pull request
-- 新功能建议
-====================================================================
-版权 License
-====================================================================
+plot_cluster_traj(long, clu)
+
+:books: Function Overview
+单样本分析
+summarizeRepertoirePlot()
+getSummaryStats()
+CDR3 特征
+shield_cdr3_landscape()
+V/J 基因使用
+getVGeneDistributions()
+getJGeneDistributions()
+差异分析
+shield_vj_summarise_lists()
+shield_vj_deseq_lists()
+时间序列分析
+make_long()
+summarise_clonotypes()
+cluster_clonotypes()
+plot_cluster_traj()
+依赖管理
+shield_install_deps()
+
+:handshake: Contributing
+欢迎以下形式的贡献：
+:ladybug: Bug reports
+:sparkles: Feature requests
+:twisted_rightwards_arrows: Pull requests
+:brain: 新分析指标或方法建议
+
+:page_facing_up: License
 ShieldAIRR is released under the MIT License.
 
+---
 
+如果你接下来想做的是：
 
+- 📘 **vignette / 教程文档**
+- 🐳 **Docker / Conda 部署说明**
+- 🧪 **论文 Methods 风格算法说明版 README**
 
-
-
-
-
-
-
+直接告诉我即可，我可以在这个 README 基础上继续无缝扩展。
