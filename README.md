@@ -1,4 +1,20 @@
+<<<<<<< HEAD
 
+=======
+# ShieldAIRR
+ShieldAIRR 是一个用于 **TCR/BCR AIRR-seq 数据分析** 的 R 包。
+它提供从 **V/J 基因使用、组间差异、单样本概览、时间序列追踪** 的完整分析工作流。
+---
+## :扳手: 安装
+### 1. 从 GitHub 安装包
+```r
+# 如有需要先安装 remotes：
+# install.packages("remotes")
+remotes::install_github("tornado2047/ShieldAIRR")
+library(ShieldAIRR)
+张雪飞
+  下午 3:31
+>>>>>>> c98770848b2a660e22fe3d5dc61d3493372b093a
 # ShieldAIRR
 ShieldAIRR 是一个用于 TCR/BCR AIRR-seq 数据分析的 R 包，提供从单样本分析、组间差异分析，到时间序列克隆轨迹建模的全流程工具。
 本包的设计理念是模块化、可扩展、与 sumrep、Immcantation 等生态兼容，方便进行高质量可视化与统计分析。
