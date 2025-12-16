@@ -16,6 +16,7 @@ shield_cdr3_landscape <- function(df,
                                   sample_name   = "Sample",
                                   output_prefix = "CDR3_Physicochemical_Landscape") {
   shield_setup_sumrep()
+  
   # -------- 0. 检查 sumrep 是否可用 --------
   if (!requireNamespace("sumrep", quietly = TRUE)) {
     stop(
@@ -26,6 +27,7 @@ shield_cdr3_landscape <- function(df,
       call. = FALSE
     )
   }
+  
   # -------- 1. 提取并清洗 CDR3 序列 --------
   if (!("junction_aa" %in% names(df))) {
     stop("df 中找不到列 'junction_aa'，请确认数据格式。")
@@ -33,10 +35,12 @@ shield_cdr3_landscape <- function(df,
   if (!("duplicate_count" %in% names(df))) {
     stop("df 中找不到列 'duplicate_count'，请确认数据格式。")
   }
+  
   seqs <- df$junction_aa
   seqs <- seqs[!is.na(seqs) & seqs != "" & nchar(seqs) > 0]
   dup_count <- df$duplicate_count[match(seqs, df$junction_aa)]
   stopifnot(length(seqs) == length(dup_count))
+  
   # -------- 2. 超安全理化性质计算函数 --------
   safe_calc <- function(func, seq_vector) {
     vapply(
@@ -51,6 +55,7 @@ shield_cdr3_landscape <- function(df,
       numeric(1)
     )
   }
+  
   # -------- 3. 逐条计算理化性质 --------
   phys <- data.frame(
     Sequence      = seqs,
@@ -130,6 +135,7 @@ shield_cdr3_landscape <- function(df,
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
     )
+  
   # -------- 5. Kidera 因子 + PCA --------
   KF <- sumrep::getKideraFactorDistributions(df)
   KF_mat <- do.call(cbind, KF)
@@ -158,6 +164,7 @@ shield_cdr3_landscape <- function(df,
       y = "PC2"
     ) +
     theme_shield(base_size = 14)
+  
   # -------- 6. Aliphatic index vs 克隆扩增 --------
   p_ai <- ggplot2::ggplot(phys, ggplot2::aes(x = Aliphatic, y = Duplicate)) +
     ggplot2::geom_point(
@@ -179,6 +186,7 @@ shield_cdr3_landscape <- function(df,
       y     = "Clone size (log10)"
     ) +
     theme_shield(base_size = 14)
+  
   # -------- 7. 关键理化性质的密度分布 --------
   phys_long <- phys |>
     dplyr::select(
@@ -203,6 +211,7 @@ shield_cdr3_landscape <- function(df,
       y     = "Density"
     ) +
     ggplot2::theme_bw(base_size = 11)
+  
   # -------- 8. Top 50 clone 理化性质热图（独立图） --------
   if (nrow(phys) >= 1) {
     top_n <- min(50L, nrow(phys))
@@ -216,10 +225,15 @@ shield_cdr3_landscape <- function(df,
       ) |>
       scale(center = TRUE, scale = TRUE) |>
       as.matrix()
+    
+    # 先清理 NA、NaN 和 Inf
+    mat <- safe_standardize(mat)
+    
     rownames(mat) <- paste0(
       "Clone", seq_len(top_n), " (n=",
       top50$Duplicate, ")"
     )
+    
     pheatmap::pheatmap(
       mat,
       color          = grDevices::colorRampPalette(
@@ -233,6 +247,7 @@ shield_cdr3_landscape <- function(df,
       device         = ragg::agg_png
     )
   }
+
   # -------- 9. 拼成主图并可选保存 --------
   main_title <- "Comprehensive Physicochemical Landscape of TCR/BCR CDR3 Repertoire"
   subtitle   <- paste(
@@ -240,13 +255,15 @@ shield_cdr3_landscape <- function(df,
     "| Unique sequences:", nrow(phys),
     "| Total reads:", scales::comma(sum(phys$Duplicate))
   )
-  final_plot <- (p_atchley | p_pca) /
-    (p_ai | p_dist) +
+  
+  final_plot <- (p_atchley | p_pca) / 
+    (p_ai | p_dist) + 
     patchwork::plot_annotation(
       title  = main_title,
       subtitle = subtitle,
       theme  = theme_shield(base_size = 18)
     )
+  
   if (!is.null(output_prefix)) {
     pdf_file <- paste0(output_prefix, ".pdf")
     png_file <- paste0(output_prefix, ".png")
@@ -266,5 +283,7 @@ shield_cdr3_landscape <- function(df,
       dpi      = 300
     )
   }
+  
   invisible(final_plot)
 }
+
