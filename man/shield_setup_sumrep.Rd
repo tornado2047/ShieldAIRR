@@ -6,7 +6,7 @@
 \usage{
 shield_setup_sumrep(
   sumrep_dir = file.path(tools::R_user_dir("ShieldAIRR", "data"), "sumrep"),
-  github_repo = "https://github.com/ImmunoGenomics/sumrep.git",
+  github_repo = "https://github.com/matsengrp/sumrep.git",
   quiet = FALSE
 )
 }
