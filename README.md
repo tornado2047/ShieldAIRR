@@ -164,13 +164,3 @@ shield_install_deps()
 
 :page_facing_up: License
 ShieldAIRR is released under the MIT License.
-
----
-
-如果你接下来想做的是：
-
-- 📘 **vignette / 教程文档**
-- 🐳 **Docker / Conda 部署说明**
-- 🧪 **论文 Methods 风格算法说明版 README**
-
-直接告诉我即可，我可以在这个 README 基础上继续无缝扩展。
